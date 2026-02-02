@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Detektor zjawisk paranormalnych wykorzystujący czujniki telefonu do wykrywania anomalii EMF, ruchu i dźwięku">
+    <meta name="keywords" content="detektor paranormalny, EMF, EVP, zjawiska paranormalne, duch, detektor duchów">
+    <title>Paranormal Detector - Wykrywacz Zjawisk Paranormalnych</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="new-modes.css">
+    <link rel="stylesheet" href="mobile.css">
+    <link rel="stylesheet" href="splash.css">
+</head>
+
+<body>
+    <!-- PPTV Splash Screen -->
+    <div class="pptv-splash" id="pptvSplash">
+        <div class="splash-content">
+            <img src="pptv-logo.png" alt="Polish Paranormal TV" class="pptv-logo">
+            <div class="splash-tagline">Detektor Zjawisk Paranormalnych</div>
+            <div class="splash-loader">
+                <div class="loader-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="scanner-overlay" id="scannerOverlay"></div>
+
+    <header class="app-header">
+        <img src="pptv-logo.png" alt="PPTV" class="pptv-badge">
+        <div class="logo-container">
+            <div class="logo-glow"></div>
+            <h1>PARANORMAL<span class="detector-text">DETECTOR</span></h1>
+        </div>
+        <div class="status-indicator" id="statusIndicator">
+            <span class="status-dot"></span>
+            <span class="status-text">Gotowy</span>
+        </div>
+    </header>
+
+    <main class="app-main">
+        <!-- Permission Screen -->
+        <section class="permission-screen" id="permissionScreen">
+            <div class="permission-content">
+                <div class="warning-icon">⚠️</div>
+                <h2>Wymagane Uprawnienia</h2>
+                <p>Aplikacja wymaga dostępu do czujników urządzenia:</p>
+                <ul class="permission-list">
+                    <li><span class="icon">📡</span> Czujniki ruchu (akcelerometr, magnetometr)</li>
+                    <li><span class="icon">🎤</span> Mikrofon (do nagrywania EVP)</li>
+                    <li><span class="icon">💡</span> Czujnik światła (jeśli dostępny)</li>
+                </ul>
+                <button class="btn-primary glow-btn" id="requestPermissions">
+                    <span class="btn-text">Rozpocznij Detekcję</span>
+                    <span class="btn-glow"></span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Mode Selection -->
+        <nav class="mode-selector" id="modeSelector" style="display: none;">
+            <button class="mode-btn active" data-mode="emf">
+                <span class="mode-icon">📡</span>
+                <span class="mode-name">EMF</span>
+            </button>
+            <button class="mode-btn" data-mode="motion">
+                <span class="mode-icon">🌀</span>
+                <span class="mode-name">Ruch</span>
+            </button>
+            <button class="mode-btn" data-mode="evp">
+                <span class="mode-icon">🎤</span>
+                <span class="mode-name">EVP</span>
+            </button>
+            <button class="mode-btn" data-mode="spirit">
+                <span class="mode-icon">👻</span>
+                <span class="mode-name">Spirit Box</span>
+            </button>
+            <button class="mode-btn" data-mode="aura">
+                <span class="mode-icon">🔮</span>
+                <span class="mode-name">Aura</span>
+            </button>
+            <button class="mode-btn" data-mode="pendulum">
+                <span class="mode-icon">🎱</span>
+                <span class="mode-name">Wahadło</span>
+            </button>
+            <button class="mode-btn" data-mode="orbs">
+                <span class="mode-icon">✨</span>
+                <span class="mode-name">Orby</span>
+            </button>
+            <button class="mode-btn" data-mode="overview">
+                <span class="mode-icon">📊</span>
+                <span class="mode-name">Przegląd</span>
+            </button>
+        </nav>
+
+        <!-- EMF Detector Mode -->
+        <section class="detector-mode emf-mode active" id="emfMode">
+            <div class="mode-header">
+                <h2>Detektor EMF</h2>
+                <p class="mode-description">Wykrywa zmiany pola magnetycznego</p>
+            </div>
+
+            <div class="emf-display">
+                <div class="emf-meter-container">
+                    <div class="emf-value" id="emfValue">0.0</div>
+                    <div class="emf-unit">μT</div>
+                </div>
+
+                <div class="meter-bar">
+                    <div class="meter-fill" id="emfMeterFill"></div>
+                    <div class="meter-markers">
+                        <span>0</span>
+                        <span>25</span>
+                        <span>50</span>
+                        <span>75</span>
+                        <span>100</span>
+                    </div>
+                </div>
+
+                <div class="emf-status" id="emfStatus">Normalne</div>
+            </div>
+
+            <canvas class="particle-canvas" id="emfParticles"></canvas>
+
+            <div class="readings-history">
+                <h3>Historia Odczytów</h3>
+                <canvas class="history-graph" id="emfHistory"></canvas>
+            </div>
+        </section>
+
+        <!-- Motion Detector Mode -->
+        <section class="detector-mode motion-mode" id="motionMode">
+            <div class="mode-header">
+                <h2>Detektor Ruchu</h2>
+                <p class="mode-description">Wykrywa nietypowe drgania i ruch</p>
+            </div>
+
+            <div class="motion-display">
+                <div class="axis-readings">
+                    <div class="axis-reading">
+                        <span class="axis-label">X</span>
+                        <div class="axis-bar">
+                            <div class="axis-fill axis-x" id="motionX"></div>
+                        </div>
+                        <span class="axis-value" id="motionXValue">0.0</span>
+                    </div>
+                    <div class="axis-reading">
+                        <span class="axis-label">Y</span>
+                        <div class="axis-bar">
+                            <div class="axis-fill axis-y" id="motionY"></div>
+                        </div>
+                        <span class="axis-value" id="motionYValue">0.0</span>
+                    </div>
+                    <div class="axis-reading">
+                        <span class="axis-label">Z</span>
+                        <div class="axis-bar">
+                            <div class="axis-fill axis-z" id="motionZ"></div>
+                        </div>
+                        <span class="axis-value" id="motionZValue">0.0</span>
+                    </div>
+                </div>
+
+                <div class="motion-magnitude">
+                    <div class="magnitude-label">Magnitud</div>
+                    <div class="magnitude-value" id="motionMagnitude">0.0</div>
+                </div>
+            </div>
+
+            <canvas class="motion-trail" id="motionTrail"></canvas>
+        </section>
+
+        <!-- EVP Recorder Mode -->
+        <section class="detector-mode evp-mode" id="evpMode">
+            <div class="mode-header">
+                <h2>Rejestrator EVP</h2>
+                <p class="mode-description">Electronic Voice Phenomena</p>
+            </div>
+
+            <div class="evp-controls">
+                <button class="evp-btn" id="evpRecord">
+                    <span class="record-icon">🔴</span>
+                    <span>Nagrywaj</span>
+                </button>
+                <button class="evp-btn" id="evpStop" disabled>
+                    <span>⏹️</span>
+                    <span>Stop</span>
+                </button>
+                <button class="evp-btn" id="evpPlay" disabled>
+                    <span>▶️</span>
+                    <span>Odtwórz</span>
+                </button>
+            </div>
+
+            <div class="evp-visualizer">
+                <canvas class="waveform" id="evpWaveform"></canvas>
+                <canvas class="spectrum" id="evpSpectrum"></canvas>
+            </div>
+
+            <div class="evp-status" id="evpStatus">Gotowy do nagrywania</div>
+        </section>
+
+        <!-- Spirit Box Mode -->
+        <section class="detector-mode spirit-mode" id="spiritMode">
+            <div class="mode-header">
+                <h2>Spirit Box</h2>
+                <p class="mode-description">Kanał komunikacji z drugą stroną</p>
+            </div>
+
+            <div class="spirit-display">
+                <div class="spirit-word" id="spiritWord">---</div>
+                <div class="static-overlay"></div>
+            </div>
+
+            <div class="spirit-controls">
+                <button class="spirit-btn" id="spiritStart">
+                    <span>Rozpocznij Sesję</span>
+                </button>
+                <button class="spirit-btn" id="spiritStop" disabled>
+                    <span>Zakończ Sesję</span>
+                </button>
+            </div>
+
+            <div class="spirit-log">
+                <h3>Log Sesji</h3>
+                <div class="log-entries" id="spiritLog"></div>
+            </div>
+        </section>
+
+        <!-- Aura Detector Mode -->
+        <section class="detector-mode aura-mode" id="auraMode">
+            <div class="mode-header">
+                <h2>Detektor Aury</h2>
+                <p class="mode-description">Wizualizacja pola energetycznego</p>
+            </div>
+
+            <div class="aura-container">
+                <canvas class="aura-canvas" id="auraCanvas"></canvas>
+                <div class="aura-silhouette"></div>
+            </div>
+
+            <div class="aura-reading">
+                <div class="aura-color-display">
+                    <div class="aura-swatch" id="auraSwatch"></div>
+                    <span class="aura-name" id="auraName">Nieznana</span>
+                </div>
+                <div class="aura-strength">
+                    <span class="strength-label">Siła aury:</span>
+                    <div class="strength-bar">
+                        <div class="strength-fill" id="auraStrength"></div>
+                    </div>
+                    <span class="strength-value" id="auraValue">0%</span>
+                </div>
+            </div>
+
+            <div class="aura-meaning" id="auraMeaning">
+                <p>Trzymaj telefon blisko siebie i pozostań w bezruchu...</p>
+            </div>
+
+            <button class="aura-scan-btn" id="auraScan">
+                <span>🔮</span>
+                <span>Skanuj Aurę</span>
+            </button>
+        </section>
+
+        <!-- Pendulum Mode -->
+        <section class="detector-mode pendulum-mode" id="pendulumMode">
+            <div class="mode-header">
+                <h2>Cyfrowe Wahadło</h2>
+                <p class="mode-description">Komunikacja TAK/NIE z zaświatami</p>
+            </div>
+
+            <div class="pendulum-container">
+                <div class="pendulum-string" id="pendulumString"></div>
+                <div class="pendulum-bob" id="pendulumBob"></div>
+                <div class="pendulum-zones">
+                    <div class="zone zone-yes">TAK</div>
+                    <div class="zone zone-no">NIE</div>
+                </div>
+            </div>
+
+            <div class="pendulum-question">
+                <input type="text" id="pendulumQuestion" placeholder="Zadaj pytanie duchom...">
+                <button class="voice-btn" id="voiceInput" title="Mów pytanie">
+                    <span>🎤</span>
+                </button>
+                <button class="ask-btn" id="askSpirit">
+                    <span>❓</span>
+                    <span>Zapytaj</span>
+                </button>
+            </div>
+
+            <div class="voice-status" id="voiceStatus" style="display: none;">
+                <div class="voice-indicator"></div>
+                <span>Słucham...</span>
+            </div>
+
+            <div class="pendulum-answer" id="pendulumAnswer">
+                <p>Zadaj pytanie i poczekaj na odpowiedź...</p>
+            </div>
+
+            <div class="pendulum-log">
+                <h3>Historia Pytań</h3>
+                <div class="question-log" id="questionLog"></div>
+            </div>
+        </section>
+
+        <!-- Orb Detector Mode -->
+        <section class="detector-mode orbs-mode" id="orbsMode">
+            <div class="mode-header">
+                <h2>Detektor Orbów</h2>
+                <p class="mode-description">Wykrywanie świetlistych anomalii</p>
+            </div>
+
+            <div class="orbs-container">
+                <video class="orbs-video" id="orbsVideo" autoplay playsinline></video>
+                <canvas class="orbs-overlay" id="orbsCanvas"></canvas>
+                <div class="orbs-counter">
+                    <span class="orbs-icon">✨</span>
+                    <span class="orbs-count" id="orbsCount">0</span>
+                </div>
+            </div>
+
+            <div class="orbs-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Wykryte orby:</span>
+                    <span class="stat-value" id="totalOrbs">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Intensywność:</span>
+                    <span class="stat-value" id="orbIntensity">Niska</span>
+                </div>
+            </div>
+
+            <div class="orbs-controls">
+                <button class="orbs-btn" id="orbsStart">
+                    <span>📷</span>
+                    <span>Uruchom Kamerę</span>
+                </button>
+                <button class="orbs-btn" id="orbsCapture" disabled>
+                    <span>📸</span>
+                    <span>Złap Orba</span>
+                </button>
+                <div class="orbs-sensitivity">
+                    <label>Czułość:</label>
+                    <input type="range" id="orbsSensitivity" min="1" max="10" value="5">
+                </div>
+            </div>
+
+            <div class="orbs-gallery" id="orbsGallery">
+                <h3>Złapane Orby</h3>
+                <div class="gallery-grid" id="galleryGrid"></div>
+            </div>
+        </section>
+
+
+        <!-- Overview Mode -->
+        <section class="detector-mode overview-mode" id="overviewMode">
+            <div class="mode-header">
+                <h2>Przegląd Wszystkich Czujników</h2>
+                <p class="mode-description">Kompleksowy monitoring</p>
+            </div>
+
+            <div class="feature-toggles">
+                <button class="toggle-btn" id="toggleVibration">
+                    <span class="toggle-icon">📳</span>
+                    <span>Wibracje</span>
+                    <span class="toggle-status" id="vibrationStatus">OFF</span>
+                </button>
+                <button class="toggle-btn" id="toggleFlashlight">
+                    <span class="toggle-icon">💡</span>
+                    <span>Latarka</span>
+                    <span class="toggle-status" id="flashlightStatus">OFF</span>
+                </button>
+                <button class="toggle-btn" id="exportSession">
+                    <span class="toggle-icon">💾</span>
+                    <span>Eksport</span>
+                </button>
+                <button class="toggle-btn" id="recalibrate">
+                    <span class="toggle-icon">🎯</span>
+                    <span>Rekalibracja</span>
+                </button>
+            </div>
+
+            <div class="overview-grid">
+                <div class="overview-card">
+                    <h3>📡 EMF</h3>
+                    <div class="overview-value" id="overviewEMF">0.0 μT</div>
+                    <div class="overview-status normal">Normalne</div>
+
+                    <div class="overview-card">
+                        <h3>🌀 Ruch</h3>
+                        <div class="overview-value" id="overviewMotion">0.0</div>
+                        <div class="overview-status normal">Stabilny</div>
+                    </div>
+
+                    <div class="overview-card">
+                        <h3>🎤 Dźwięk</h3>
+                        <div class="overview-value" id="overviewSound">-- dB</div>
+                        <div class="overview-status normal">Cisza</div>
+                    </div>
+
+                    <div class="overview-card">
+                        <h3>⚡ Anomalie</h3>
+                        <div class="overview-value" id="overviewAnomalies">0</div>
+                        <div class="overview-status normal">Brak</div>
+                    </div>
+                </div>
+
+                <div class="session-info">
+                    <div class="session-timer">
+                        <span class="timer-label">Czas sesji:</span>
+                        <span class="timer-value" id="sessionTimer">00:00</span>
+                    </div>
+                </div>
+
+                <div class="alert-feed" id="alertFeed">
+                    <h3>Alerty i Wykrycia</h3>
+                    <div class="alert-list" id="alertList">
+                        <p class="no-alerts">Brak alertów</p>
+                    </div>
+                </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>⚠️ Wyłącznie do celów rozrywkowych. Odczyty czujników mogą być zakłócane przez urządzenia elektroniczne.</p>
+        <p style="margin-top: 0.5rem; font-size: 0.75rem; opacity: 0.6;">Powered by Polish Paranormal TV</p>
+    </footer>
+
+    <script src="splash.js"></script>
+    <script src="app.js"></script>
+    <script src="features.js"></script>
+</body>
+
+</html>

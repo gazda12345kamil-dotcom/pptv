@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+
+# Build
+dist/
+build/
+
+# Temporary files
+*.tmp
+.cache/
+
+# Personal data
+exported_sessions/
+*.json
+
+# Backup files
+*.bak
+*.backup
+*~

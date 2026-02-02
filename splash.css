@@ -1,0 +1,211 @@
+/* ===== PPTV SPLASH SCREEN ===== */
+.pptv-splash {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0a0a0f 0%, #1a0a2e 50%, #2a0a1e 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: splashFadeIn 0.5s ease-out;
+}
+
+.pptv-splash.hiding {
+    animation: splashFadeOut 0.8s ease-out forwards;
+}
+
+@keyframes splashFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes splashFadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(1.1);
+    }
+}
+
+.splash-content {
+    text-align: center;
+    max-width: 90%;
+    animation: contentSlideUp 1s ease-out;
+}
+
+@keyframes contentSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.pptv-logo {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    filter: drop-shadow(0 0 30px rgba(220, 38, 38, 0.5));
+    animation: logoGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes logoGlow {
+    from {
+        filter: drop-shadow(0 0 20px rgba(220, 38, 38, 0.4));
+    }
+
+    to {
+        filter: drop-shadow(0 0 40px rgba(220, 38, 38, 0.7));
+    }
+}
+
+.splash-tagline {
+    margin-top: 2rem;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #e0e0ff;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    text-shadow: 0 0 20px rgba(139, 92, 246, 0.8);
+    animation: taglinePulse 3s ease-in-out infinite;
+}
+
+@keyframes taglinePulse {
+
+    0%,
+    100% {
+        opacity: 0.8;
+        text-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+    }
+
+    50% {
+        opacity: 1;
+        text-shadow: 0 0 25px rgba(139, 92, 246, 1);
+    }
+}
+
+.splash-loader {
+    margin-top: 3rem;
+    width: 200px;
+    height: 4px;
+    background: rgba(139, 92, 246, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.loader-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #8b5cf6, #22ff88, #8b5cf6);
+    background-size: 200% 100%;
+    border-radius: 2px;
+    box-shadow: 0 0 10px #8b5cf6;
+    animation: loaderProgress 3s ease-out forwards, loaderShimmer 1.5s linear infinite;
+}
+
+@keyframes loaderProgress {
+    from {
+        width: 0%;
+    }
+
+    to {
+        width: 100%;
+    }
+}
+
+@keyframes loaderShimmer {
+    from {
+        background-position: 0% 0%;
+    }
+
+    to {
+        background-position: 200% 0%;
+    }
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media screen and (max-width: 480px) {
+    .pptv-logo {
+        max-width: 280px;
+    }
+
+    .splash-tagline {
+        font-size: 0.9rem;
+        margin-top: 1.5rem;
+        letter-spacing: 0.1em;
+    }
+
+    .splash-loader {
+        width: 150px;
+        margin-top: 2rem;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    .pptv-logo {
+        max-width: 240px;
+    }
+
+    .splash-tagline {
+        font-size: 0.8rem;
+    }
+}
+
+/* ===== LANDSCAPE MODE ===== */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    .pptv-logo {
+        max-width: 200px;
+    }
+
+    .splash-tagline {
+        font-size: 0.8rem;
+        margin-top: 1rem;
+    }
+
+    .splash-loader {
+        margin-top: 1.5rem;
+        width: 120px;
+    }
+}
+
+/* ===== BRANDING IN HEADER ===== */
+.app-header .pptv-badge {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 60px;
+    height: auto;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.app-header .pptv-badge:hover {
+    opacity: 1;
+}
+
+@media screen and (max-width: 480px) {
+    .app-header .pptv-badge {
+        width: 40px;
+        top: 0.3rem;
+        right: 0.3rem;
+    }
+}
